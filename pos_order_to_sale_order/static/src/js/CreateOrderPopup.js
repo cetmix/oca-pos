@@ -29,15 +29,16 @@ odoo.define("point_of_sale.CreateOrderPopup", function (require) {
 
         async _actionCreateSaleOrder(order_state) {
             // Create Sale Order
-            await this._createSaleOrder(order_state);
-
-            // Delete current order
-            const current_order = this.env.pos.get_order();
-            this.env.pos.removeOrder(current_order);
-            this.env.pos.add_new_order();
-
-            // Close popup
-            return await super.confirm();
+            const response = await this._createSaleOrder(order_state);
+            if (response) {
+                // Delete current order
+                const current_order = this.env.pos.get_order();
+                this.env.pos.removeOrder(current_order);
+                this.env.pos.add_new_order();
+                // Close popup
+                return await super.confirm();
+            }
+            return await this.cancel();
         }
 
         async _createSaleOrder(order_state) {
